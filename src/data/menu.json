@@ -34,5 +34,32 @@
     "stock": "Tersedia",
     "category": "Paket",
     "image": "/src/img/pempek_paket.png"
+  },
+  {
+    "id": 5,
+    "name": "Es Teh Manis",
+    "description": "Teh seduh tradisional dengan gula asli dan es batu kristal. Melepas dahaga setelah menyantap pempek.",
+    "price": 5000,
+    "stock": "Tersedia",
+    "category": "Minuman",
+    "image": "/src/img/es_teh.png"
+  },
+  {
+    "id": 6,
+    "name": "Es Jeruk Peras",
+    "description": "Jeruk peras murni dengan sedikit gula dan es. Segar dan kaya vitamin C.",
+    "price": 10000,
+    "stock": "Tersedia",
+    "category": "Minuman",
+    "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?q=80&w=400&h=300&auto=format&fit=crop"
+  },
+  {
+    "id": 7,
+    "name": "Kopi Hitam",
+    "description": "Kopi hitam robusta khas Sumatera yang beraroma kuat dan sedikit pahit, cocok untuk pendamping santai.",
+    "price": 8000,
+    "stock": "Tersedia",
+    "category": "Minuman",
+    "image": "https://images.unsplash.com/photo-1595434066133-d922dadfc17d?q=80&w=400&h=300&auto=format&fit=crop"
   }
 ]
