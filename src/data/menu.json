@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Pempek Kapal Selam Besar",
+    "description": "Pempek legendaris dengan isian satu telur ayam utuh. Kulit kenyal dibuat dari ikan tenggiri pilihan, disajikan dengan cuko kental pedas manis khas Palembang.",
+    "price": 25000,
+    "stock": "Tersedia",
+    "category": "Favorite",
+    "image": "/src/img/pempek_kapal_selam.png"
+  },
+  {
+    "id": 2,
+    "name": "Pempek Lenjer Panjang",
+    "description": "Pempek silinder panjang dengan tekstur kenyal premium dan rasa ikan tenggiri yang autentik. Cocok digoreng garing sebelum disantap.",
+    "price": 15000,
+    "stock": "Tersedia",
+    "category": "Klasik",
+    "image": "/src/img/pempek_lenjer.png"
+  },
+  {
+    "id": 3,
+    "name": "Pempek Adaan (Bulat)",
+    "description": "Pempek berbentuk bulat dengan campuran santan dan daun bawang, menghadirkan rasa gurih yang unik. Camilan sempurna untuk semua usia.",
+    "price": 5000,
+    "stock": "Tersedia",
+    "category": "Camilan",
+    "image": "/src/img/pempek_adaan.png"
+  },
+  {
+    "id": 4,
+    "name": "Paket Hemat Najwa",
+    "description": "Kombinasi sempurna: 2 Adaan, 2 Telur Kecil, dan 1 Lenjer Kecil beserta cuko dan pelengkap. Porsi pas untuk satu orang.",
+    "price": 35000,
+    "stock": "Tersedia",
+    "category": "Paket",
+    "image": "/src/img/pempek_paket.png"
+  }
+]

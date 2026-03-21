@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pempek Najwa | Citarasa Autentik Palembang</title>
+    <meta name="description" content="Pempek Najwa - Citarasa Autentik Pempek Palembang. Dibuat dari ikan tenggiri pilihan dengan cuko khas.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root { --gold: #c5a059; --gold-dark: #a6843e; --charcoal: #0a0a0a; }
+        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1,h2,h3,.serif { font-family: 'Playfair Display', serif; }
+        body { background: #0a0a0a; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 10px; }
+        .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+        .gold-glow { box-shadow: 0 0 40px rgba(197,160,89,0.2); }
+        .btn-gold { background: linear-gradient(135deg, #c5a059, #a6843e); color: #000; font-weight: 700; transition: all .3s; }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(197,160,89,0.4); }
+        .hero-img { object-fit: cover; filter: brightness(0.7); }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+        .anim { animation: fadeUp 0.7s ease forwards; }
+        .anim-d1 { animation-delay: 0.1s; opacity: 0; }
+        .anim-d2 { animation-delay: 0.3s; opacity: 0; }
+        .anim-d3 { animation-delay: 0.5s; opacity: 0; }
+        .anim-d4 { animation-delay: 0.7s; opacity: 0; }
+        @keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+        .shimmer::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent); animation:shimmer 2s infinite; }
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 60px rgba(197,160,89,0.15); border-color: rgba(197,160,89,0.3); }
+        .nav-link { position: relative; }
+        .nav-link::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background:#c5a059; transition:width .3s; }
+        .nav-link:hover::after { width: 100%; }
+        .bottom-nav a.active { color: #c5a059; }
+    </style>
+</head>
+<body class="text-white overflow-x-hidden">
+
+    <!-- NAVBAR DESKTOP -->
+    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#c5a059] to-[#a6843e] flex items-center justify-center">
+                    <i class="fa-solid fa-fire text-black text-sm"></i>
+                </div>
+                <span class="text-xl font-bold tracking-widest serif text-[#c5a059]">PEMPEK NAJWA</span>
+            </a>
+            <div class="hidden md:flex items-center gap-10">
+                <a href="index.html" class="nav-link text-[#c5a059] text-sm font-medium">Home</a>
+                <a href="menu.html" class="nav-link text-white/60 hover:text-white text-sm font-medium transition-colors">Menu</a>
+                <a href="cart.html" class="nav-link text-white/60 hover:text-white text-sm font-medium transition-colors relative">
+                    Keranjang
+                    <span id="cartBadge" class="absolute -top-2 -right-5 bg-red-500 text-[10px] text-white rounded-full w-4 h-4 items-center justify-center hidden flex">0</span>
+                </a>
+                <a href="admin/login.html" class="btn-gold px-5 py-2 rounded-xl text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-xs"></i> Admin
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <img src="/src/img/pempek_hero.png" alt="Pempek Najwa Hero" class="absolute inset-0 w-full h-full hero-img">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 via-[#0a0a0a]/40 to-[#0a0a0a]"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/80 to-transparent"></div>
+        
+        <!-- Decorative floating orbs -->
+        <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-[#c5a059]/10 rounded-full blur-[120px] pointer-events-none"></div>
+        
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-left">
+            <p class="text-[#c5a059] tracking-[0.5em] text-xs uppercase font-bold mb-6 anim anim-d1">Khas Palembang · Sejak 1995</p>
+            <h1 class="serif text-5xl md:text-8xl font-bold leading-[1.1] mb-8 anim anim-d2">
+                Citarasa <span class="text-[#c5a059] italic">Autentik</span><br>
+                di Setiap <span class="text-white/80">Gigitan.</span>
+            </h1>
+            <p class="text-white/50 text-lg md:text-xl max-w-xl mb-12 font-light leading-relaxed anim anim-d3">
+                Dibuat dari Ikan Tenggiri segar pilihan dengan resep turun-temurun. Cuko kental kami adalah rahasia yang tak tertandingi.
+            </p>
+            <div class="flex flex-wrap gap-5 anim anim-d4">
+                <a href="menu.html" class="btn-gold px-8 py-4 rounded-2xl flex items-center gap-3 text-sm font-bold tracking-wide">
+                    <i class="fa-solid fa-utensils"></i> Pesan Sekarang
+                </a>
+                <a href="#about" class="glass px-8 py-4 rounded-2xl text-white/70 hover:text-white text-sm font-medium flex items-center gap-3 transition-all hover:border-white/20">
+                    <i class="fa-solid fa-play text-xs"></i> Lihat Koleksi
+                </a>
+            </div>
+            
+            <!-- Stats Bar -->
+            <div class="mt-16 flex flex-wrap gap-10 anim anim-d4">
+                <div>
+                    <p class="text-3xl font-bold serif text-[#c5a059]">30+</p>
+                    <p class="text-white/40 text-xs uppercase tracking-widest mt-1">Varian Menu</p>
+                </div>
+                <div class="w-px bg-white/10"></div>
+                <div>
+                    <p class="text-3xl font-bold serif text-[#c5a059]">10K+</p>
+                    <p class="text-white/40 text-xs uppercase tracking-widest mt-1">Pelanggan</p>
+                </div>
+                <div class="w-px bg-white/10"></div>
+                <div>
+                    <p class="text-3xl font-bold serif text-[#c5a059]">5★</p>
+                    <p class="text-white/40 text-xs uppercase tracking-widest mt-1">Rating</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED MENU SECTION -->
+    <section id="about" class="py-28 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-20">
+            <p class="text-[#c5a059] tracking-[0.4em] text-xs uppercase font-bold mb-4">Pilihan Utama</p>
+            <h2 class="serif text-4xl md:text-6xl font-bold text-white mb-6">Menu <span class="text-[#c5a059] italic">Unggulan</span></h2>
+            <p class="text-white/40 max-w-xl mx-auto text-sm leading-relaxed">Setiap hidangan diracik dengan penuh cinta, menggunakan bahan premium yang dipilih langsung setiap harinya.</p>
+        </div>
+        <div id="featuredGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        <div class="text-center mt-14">
+            <a href="menu.html" class="btn-gold px-10 py-4 rounded-2xl inline-flex items-center gap-3 font-bold text-sm">
+                Lihat Semua Menu <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- WHY US SECTION -->
+    <section class="py-20 px-6 bg-black/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass rounded-3xl p-10 card-hover text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#c5a059]/20 to-[#c5a059]/5 flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-fish text-2xl text-[#c5a059]"></i>
+                    </div>
+                    <h3 class="serif text-xl font-bold mb-3">100% Ikan Tenggiri</h3>
+                    <p class="text-white/40 text-sm leading-relaxed">Tidak ada campuran tepung berlebih. Keaslian rasa ikan terasa di setiap gigitan.</p>
+                </div>
+                <div class="glass rounded-3xl p-10 card-hover text-center gold-glow border-[#c5a059]/20">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#c5a059]/20 to-[#c5a059]/5 flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-truck-fast text-2xl text-[#c5a059]"></i>
+                    </div>
+                    <h3 class="serif text-xl font-bold mb-3">Pengiriman Cepat</h3>
+                    <p class="text-white/40 text-sm leading-relaxed">Area Palembang diantar dalam 60 menit. Pengiriman luar kota tersedia setiap hari.</p>
+                </div>
+                <div class="glass rounded-3xl p-10 card-hover text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#c5a059]/20 to-[#c5a059]/5 flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-shield-halved text-2xl text-[#c5a059]"></i>
+                    </div>
+                    <h3 class="serif text-xl font-bold mb-3">Halal & Higienis</h3>
+                    <p class="text-white/40 text-sm leading-relaxed">Bersertifikat halal, dibuat di dapur berstandar kebersihan tinggi setiap harinya.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-16 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div>
+                <p class="serif text-2xl font-bold text-[#c5a059] tracking-widest mb-2">PEMPEK NAJWA</p>
+                <p class="text-white/30 text-sm">Jl. Sudirman No. 99, Palembang, Sumatera Selatan</p>
+                <p class="text-white/30 text-sm mt-1">📞 +62 812-3456-7890  |  ✉️ najwa@pempek.id</p>
+            </div>
+            <div class="flex gap-5">
+                <a href="#" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-[#c5a059]/20 transition-all">
+                    <i class="fa-brands fa-instagram text-[#c5a059]"></i>
+                </a>
+                <a href="#" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-[#c5a059]/20 transition-all">
+                    <i class="fa-brands fa-whatsapp text-[#c5a059]"></i>
+                </a>
+                <a href="#" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-[#c5a059]/20 transition-all">
+                    <i class="fa-brands fa-tiktok text-[#c5a059]"></i>
+                </a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-8 pt-8 border-t border-white/5 text-center text-white/20 text-xs">
+            © 2024 Pempek Najwa Palembang. Seluruh hak cipta dilindungi undang-undang.
+        </div>
+    </footer>
+
+    <!-- BOTTOM NAV (MOBILE) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 glass border-t border-white/10 md:hidden">
+        <div class="flex justify-around py-3 px-4">
+            <a href="index.html" class="flex flex-col items-center gap-1 text-[#c5a059] active">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[10px] font-medium">Home</span>
+            </a>
+            <a href="menu.html" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors">
+                <i class="fa-solid fa-utensils text-lg"></i>
+                <span class="text-[10px] font-medium">Menu</span>
+            </a>
+            <a href="cart.html" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors relative">
+                <i class="fa-solid fa-receipt text-lg"></i>
+                <span class="text-[10px] font-medium">Keranjang</span>
+                <span id="mobileBadge" class="absolute -top-1 right-1 bg-red-500 text-[9px] text-white rounded-full w-4 h-4 items-center justify-center hidden flex">0</span>
+            </a>
+            <a href="admin/login.html" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors">
+                <i class="fa-solid fa-user-shield text-lg"></i>
+                <span class="text-[10px] font-medium">Admin</span>
+            </a>
+        </div>
+    </nav>
+
+    <script type="module">
+        // Initialize menu DB from JSON
+        const initDB = async () => {
+            if (!localStorage.getItem('najwa_menu_v2')) {
+                const res = await fetch('/src/data/menu.json');
+                const data = await res.json();
+                localStorage.setItem('najwa_menu_v2', JSON.stringify(data));
+            }
+        };
+
+        const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(n);
+
+        const updateCartBadge = () => {
+            const items = JSON.parse(localStorage.getItem('najwa_cart')) || [];
+            const total = items.reduce((s,i) => s + i.qty, 0);
+            [document.getElementById('cartBadge'), document.getElementById('mobileBadge')].forEach(el => {
+                if (!el) return;
+                if (total > 0) { el.textContent = total; el.classList.remove('hidden'); el.classList.add('flex'); }
+                else { el.classList.add('hidden'); }
+            });
+        };
+
+        const renderFeatured = () => {
+            const menu = JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
+            const featured = menu.slice(0, 4);
+            const grid = document.getElementById('featuredGrid');
+            grid.innerHTML = featured.map(p => `
+                <div class="glass rounded-3xl overflow-hidden card-hover group cursor-pointer" onclick="window.location='menu.html'">
+                    <div class="relative h-52 overflow-hidden">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/400x300/1a1a1a/c5a059?text=Pempek+Najwa'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <span class="absolute top-3 right-3 glass px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-[#c5a059]">${p.category}</span>
+                        <span class="absolute top-3 left-3 ${p.stock === 'Tersedia' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'} px-2 py-1 rounded-full text-[10px] font-bold uppercase">
+                            ${p.stock}
+                        </span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="serif font-bold text-lg mb-2 group-hover:text-[#c5a059] transition-colors">${p.name}</h3>
+                        <p class="text-white/40 text-xs leading-relaxed mb-4 line-clamp-2">${p.description}</p>
+                        <div class="flex items-center justify-between">
+                            <p class="text-[#c5a059] font-bold text-lg">${formatRupiah(p.price)}</p>
+                            <button onclick="event.stopPropagation(); addToCart(${p.id})" class="w-9 h-9 bg-[#c5a059] text-black rounded-xl flex items-center justify-center hover:scale-110 transition-transform font-bold text-lg">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.addToCart = (id) => {
+            const menu = JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
+            const product = menu.find(p => p.id == id);
+            if (!product) return;
+            let cart = JSON.parse(localStorage.getItem('najwa_cart')) || [];
+            const idx = cart.findIndex(i => i.id == id);
+            if (idx > -1) cart[idx].qty += 1;
+            else cart.push({ ...product, qty: 1 });
+            localStorage.setItem('najwa_cart', JSON.stringify(cart));
+            updateCartBadge();
+            Swal.fire({ icon:'success', title:'Ditambahkan!', text:`${product.name} masuk keranjang.`, timer:1500, showConfirmButton:false, background:'#111', color:'#fff', toast:true, position:'top-end', timerProgressBar:true });
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initDB();
+            renderFeatured();
+            updateCartBadge();
+        });
+        window.addEventListener('storage', updateCartBadge);
+    </script>
+</body>
+</html>

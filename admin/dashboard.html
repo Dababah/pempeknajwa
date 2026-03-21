@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin | Pempek Najwa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1,h2,h3,.serif { font-family: 'Playfair Display', serif; }
+        body { background: #070707; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #c5a059; border-radius:10px; }
+        .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); }
+        .glass-hover { transition: all 0.3s; }
+        .glass-hover:hover { background: rgba(255,255,255,0.06); border-color: rgba(197,160,89,0.3); }
+        .btn-gold { background: linear-gradient(135deg, #c5a059, #a6843e); color:#000; font-weight:700; transition:all .3s; }
+        .btn-gold:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(197,160,89,0.4); }
+        .stat-card { transition: all 0.4s; border: 1px solid rgba(255,255,255,0.07); }
+        .stat-card:hover { transform:translateY(-4px); }
+        .input-field { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color:white; transition:all .3s; }
+        .input-field:focus { border-color: rgba(197,160,89,0.5); box-shadow:0 0 0 3px rgba(197,160,89,0.08); outline:none; }
+        .input-field::placeholder { color:rgba(255,255,255,0.2); }
+        .sidebar { background: rgba(0,0,0,0.6); border-right: 1px solid rgba(255,255,255,0.06); }
+        .sidebar-link { transition:all .3s; border-radius:12px; }
+        .sidebar-link.active, .sidebar-link:hover { background:rgba(197,160,89,0.1); color:#c5a059; }
+        .badge-green { background:rgba(34,197,94,0.1); color:#4ade80; border:1px solid rgba(34,197,94,0.2); }
+        .badge-red { background:rgba(239,68,68,0.1); color:#f87171; border:1px solid rgba(239,68,68,0.2); }
+        @keyframes slideIn { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:none} }
+        .table-row { animation: slideIn 0.3s ease forwards; }
+        .toggle-stock { transition: all 0.3s; cursor:pointer; }
+        .img-preview { width:100%; height:160px; object-fit:cover; border-radius:12px; border:1px dashed rgba(255,255,255,0.15); }
+        .tab-btn.active { color:#c5a059; border-bottom:2px solid #c5a059; }
+        #editModal .modal-bg { background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); }
+    </style>
+</head>
+<body class="text-white min-h-screen flex">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar hidden md:flex flex-col w-64 min-h-screen p-6 fixed left-0 top-0 bottom-0 z-40">
+        <div class="mb-10">
+            <div class="flex items-center gap-3 mb-1">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#c5a059] to-[#a6843e] flex items-center justify-center">
+                    <i class="fa-solid fa-fire text-black text-xs"></i>
+                </div>
+                <div>
+                    <p class="text-[#c5a059] font-bold serif text-sm tracking-widest">NAJWA</p>
+                    <p class="text-white/30 text-[9px] uppercase tracking-widest">Admin Panel</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="space-y-1 flex-1">
+            <a href="#" onclick="showTab('dashboard')" class="sidebar-link active flex items-center gap-3 px-4 py-3 text-sm font-medium">
+                <i class="fa-solid fa-chart-pie w-4 text-center"></i> Dashboard
+            </a>
+            <a href="#" onclick="showTab('menu')" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-white/50">
+                <i class="fa-solid fa-utensils w-4 text-center"></i> Manajemen Menu
+            </a>
+            <a href="#" onclick="showTab('add')" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-white/50">
+                <i class="fa-solid fa-plus-circle w-4 text-center"></i> Tambah Produk
+            </a>
+            <a href="#" onclick="generatePDF()" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium text-white/50">
+                <i class="fa-solid fa-file-pdf w-4 text-center"></i> Laporan PDF
+            </a>
+        </nav>
+
+        <div class="mt-auto">
+            <div class="glass rounded-2xl p-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#c5a059]/30 to-[#c5a059]/10 flex items-center justify-center">
+                        <i class="fa-solid fa-user text-[#c5a059] text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold">Najwa Admin</p>
+                        <p class="text-white/30 text-xs">Super Admin</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="logout()" class="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all text-sm">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+            <a href="../index.html" class="flex items-center gap-2 px-4 py-3 rounded-xl text-white/30 hover:text-white/60 transition-all text-sm mt-1">
+                <i class="fa-solid fa-store"></i> Lihat Toko
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 md:ml-64 min-h-screen">
+        <!-- Top Bar -->
+        <header class="sticky top-0 z-30 glass border-b border-white/5 px-8 py-4 flex items-center justify-between">
+            <div>
+                <h2 class="serif text-xl font-bold" id="pageTitle">Dashboard</h2>
+                <p class="text-white/30 text-xs mt-0.5">Minggu, 22 Maret 2026</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="generatePDF()" class="glass px-5 py-2.5 rounded-xl text-xs font-bold text-[#c5a059] flex items-center gap-2 hover:bg-[#c5a059]/10 transition-all">
+                    <i class="fa-solid fa-file-arrow-down"></i> Export PDF
+                </button>
+                <button onclick="showTab('add')" class="btn-gold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Tambah Menu
+                </button>
+            </div>
+        </header>
+
+        <div class="p-8">
+
+            <!-- ===== TAB: DASHBOARD ===== -->
+            <div id="tab-dashboard" class="tab-pane">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="stat-card rounded-2xl p-6 glass">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-[#c5a059]/10 flex items-center justify-center">
+                                <i class="fa-solid fa-bowl-food text-[#c5a059] text-lg"></i>
+                            </div>
+                            <span class="text-white/30 text-xs uppercase tracking-widest">Total Menu</span>
+                        </div>
+                        <p id="statTotal" class="text-4xl font-bold serif text-[#c5a059]">0</p>
+                        <p class="text-white/30 text-xs mt-1">Item terdaftar</p>
+                    </div>
+                    <div class="stat-card rounded-2xl p-6 glass">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
+                                <i class="fa-solid fa-circle-check text-green-400 text-lg"></i>
+                            </div>
+                            <span class="text-white/30 text-xs uppercase tracking-widest">Tersedia</span>
+                        </div>
+                        <p id="statAvail" class="text-4xl font-bold serif text-green-400">0</p>
+                        <p class="text-white/30 text-xs mt-1">Menu aktif</p>
+                    </div>
+                    <div class="stat-card rounded-2xl p-6 glass">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center">
+                                <i class="fa-solid fa-circle-xmark text-red-400 text-lg"></i>
+                            </div>
+                            <span class="text-white/30 text-xs uppercase tracking-widest">Habis</span>
+                        </div>
+                        <p id="statOut" class="text-4xl font-bold serif text-red-400">0</p>
+                        <p class="text-white/30 text-xs mt-1">Stok kosong</p>
+                    </div>
+                    <div class="stat-card rounded-2xl p-6 glass">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                                <i class="fa-solid fa-tags text-purple-400 text-lg"></i>
+                            </div>
+                            <span class="text-white/30 text-xs uppercase tracking-widest">Kategori</span>
+                        </div>
+                        <p id="statCat" class="text-4xl font-bold serif text-purple-400">0</p>
+                        <p class="text-white/30 text-xs mt-1">Jenis kategori</p>
+                    </div>
+                </div>
+
+                <!-- Overview chart + recent products -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Category Summary -->
+                    <div class="glass rounded-3xl p-8">
+                        <h3 class="serif text-lg font-bold mb-6">Distribusi Kategori</h3>
+                        <div id="catSummary" class="space-y-4"></div>
+                    </div>
+                    <!-- Price Range -->
+                    <div class="glass rounded-3xl p-8">
+                        <h3 class="serif text-lg font-bold mb-6">Rentang Harga Menu</h3>
+                        <div id="priceRange" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TAB: MENU MANAGEMENT ===== -->
+            <div id="tab-menu" class="tab-pane hidden">
+                <!-- Search Bar -->
+                <div class="flex flex-col md:flex-row gap-4 mb-8">
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-sm"></i>
+                        <input id="searchMenu" type="text" oninput="filterTable()" placeholder="Cari nama menu, kategori..." class="input-field w-full rounded-xl py-3 pl-11 pr-4 text-sm">
+                    </div>
+                    <select id="filterStok" onchange="filterTable()" class="input-field rounded-xl px-4 py-3 text-sm w-full md:w-48">
+                        <option value="all">Semua Stok</option>
+                        <option value="Tersedia">Tersedia</option>
+                        <option value="Habis">Habis</option>
+                    </select>
+                </div>
+
+                <!-- Table -->
+                <div class="glass rounded-3xl overflow-hidden">
+                    <div class="p-6 border-b border-white/5 flex items-center justify-between">
+                        <h3 class="serif text-lg font-bold">Daftar Menu</h3>
+                        <span id="tableCount" class="text-white/30 text-xs">0 produk</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-white/5 bg-white/2">
+                                    <th class="text-left px-6 py-4 text-[10px] uppercase tracking-widest text-white/30 font-bold">Produk</th>
+                                    <th class="text-left px-6 py-4 text-[10px] uppercase tracking-widest text-white/30 font-bold">Harga</th>
+                                    <th class="text-left px-6 py-4 text-[10px] uppercase tracking-widest text-white/30 font-bold">Kategori</th>
+                                    <th class="text-center px-6 py-4 text-[10px] uppercase tracking-widest text-white/30 font-bold">Stok</th>
+                                    <th class="text-right px-6 py-4 text-[10px] uppercase tracking-widest text-white/30 font-bold">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="menuTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TAB: ADD PRODUCT ===== -->
+            <div id="tab-add" class="tab-pane hidden">
+                <div class="max-w-2xl">
+                    <div class="glass rounded-3xl p-10">
+                        <h3 class="serif text-2xl font-bold mb-2">Tambah Menu Baru</h3>
+                        <p class="text-white/30 text-sm mb-8">Isi data produk secara lengkap untuk ditambahkan ke katalog menu.</p>
+
+                        <form id="addProductForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Nama Menu *</label>
+                                    <input type="text" id="pName" required placeholder="cth: Pempek Kapal Selam" class="input-field w-full rounded-xl py-3 px-4 text-sm">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Harga (IDR) *</label>
+                                    <div class="relative">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-sm font-bold">Rp</span>
+                                        <input type="number" id="pPrice" required placeholder="25000" class="input-field w-full rounded-xl py-3 pl-10 pr-4 text-sm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Kategori *</label>
+                                    <input type="text" id="pCategory" required placeholder="cth: Favorite, Paket, Klasik" class="input-field w-full rounded-xl py-3 px-4 text-sm" list="categoryList">
+                                    <datalist id="categoryList">
+                                        <option value="Favorite"><option value="Klasik"><option value="Camilan"><option value="Paket">
+                                    </datalist>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Status Stok *</label>
+                                    <select id="pStock" class="input-field w-full rounded-xl py-3 px-4 text-sm">
+                                        <option value="Tersedia">✅ Tersedia</option>
+                                        <option value="Habis">❌ Habis</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Deskripsi Produk *</label>
+                                <textarea id="pDesc" rows="3" required placeholder="Deskripsi lengkap menu..." class="input-field w-full rounded-xl py-3 px-4 text-sm resize-none"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Foto Produk</label>
+                                <div class="flex gap-4 mb-3">
+                                    <label class="flex-1 glass rounded-xl py-3 px-4 text-sm text-white/40 flex items-center gap-2 cursor-pointer hover:border-[#c5a059]/30 transition-all">
+                                        <i class="fa-solid fa-cloud-arrow-up text-[#c5a059]"></i>
+                                        <span id="fileLabel">Upload gambar...</span>
+                                        <input type="file" id="pImage" accept="image/*" class="hidden" onchange="previewImage(event)">
+                                    </label>
+                                    <span class="text-white/20 text-xs flex items-center">atau</span>
+                                    <input type="url" id="pImageUrl" placeholder="URL gambar..." class="input-field flex-1 rounded-xl py-3 px-4 text-sm" oninput="previewUrl()">
+                                </div>
+                                <img id="imgPreview" class="img-preview hidden" alt="Preview">
+                            </div>
+
+                            <div class="flex gap-4">
+                                <button type="submit" class="btn-gold flex-1 py-4 rounded-2xl flex items-center justify-center gap-2 font-bold text-sm">
+                                    <i class="fa-solid fa-check"></i> Simpan Produk
+                                </button>
+                                <button type="reset" onclick="clearForm()" class="glass flex-1 py-4 rounded-2xl text-white/50 hover:text-white hover:bg-white/5 transition-all text-sm">
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div class="modal-bg absolute inset-0" onclick="closeEdit()"></div>
+        <div class="glass relative z-10 rounded-3xl p-8 w-full max-w-md border border-[#c5a059]/20" style="backdrop-filter:blur(40px); background:rgba(15,15,15,0.95);">
+            <h3 class="serif text-xl font-bold mb-2 text-[#c5a059]">Edit Produk</h3>
+            <p class="text-white/30 text-xs mb-7">Ubah informasi produk yang diperlukan.</p>
+            <form id="editForm" class="space-y-5">
+                <input type="hidden" id="editId">
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Nama Menu</label>
+                    <input type="text" id="editName" class="input-field w-full rounded-xl py-3 px-4 text-sm">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Harga (IDR)</label>
+                    <input type="number" id="editPrice" class="input-field w-full rounded-xl py-3 px-4 text-sm">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Kategori</label>
+                    <input type="text" id="editCategory" class="input-field w-full rounded-xl py-3 px-4 text-sm">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Deskripsi</label>
+                    <textarea id="editDesc" rows="2" class="input-field w-full rounded-xl py-3 px-4 text-sm resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Status Stok</label>
+                    <select id="editStock" class="input-field w-full rounded-xl py-3 px-4 text-sm">
+                        <option value="Tersedia">Tersedia</option>
+                        <option value="Habis">Habis</option>
+                    </select>
+                </div>
+                <div class="flex gap-4 pt-2">
+                    <button type="submit" class="btn-gold flex-1 py-3 rounded-xl text-sm font-bold">Simpan Perubahan</button>
+                    <button type="button" onclick="closeEdit()" class="glass flex-1 py-3 rounded-xl text-sm text-white/50 hover:text-white transition-all">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // === SECURITY CHECK ===
+        if (sessionStorage.getItem('isAdmin') !== 'true') {
+            window.location.href = 'login.html';
+        }
+
+        const formatRupiah = (n) => new Intl.NumberFormat('id-ID', {style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n);
+
+        const getMenu = () => JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
+        const saveMenu = (menu) => {
+            localStorage.setItem('najwa_menu_v2', JSON.stringify(menu));
+            loadDashboard();
+            loadTable();
+        };
+
+        // === TABS ===
+        const showTab = (tab) => {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.querySelectorAll('.sidebar-link').forEach(l => { l.classList.remove('active'); l.classList.add('text-white/50'); });
+            
+            const titles = { dashboard:'Dashboard', menu:'Manajemen Menu', add:'Tambah Produk Baru' };
+            document.getElementById('pageTitle').textContent = titles[tab] || 'Dashboard';
+        };
+
+        // === DASHBOARD STATS ===
+        const loadDashboard = () => {
+            const menu = getMenu();
+            const available = menu.filter(p => p.stock === 'Tersedia').length;
+            const outOfStock = menu.filter(p => p.stock === 'Habis').length;
+            const categories = [...new Set(menu.map(p => p.category))];
+
+            document.getElementById('statTotal').textContent = menu.length;
+            document.getElementById('statAvail').textContent = available;
+            document.getElementById('statOut').textContent = outOfStock;
+            document.getElementById('statCat').textContent = categories.length;
+
+            // Category distribution
+            const catSummary = document.getElementById('catSummary');
+            catSummary.innerHTML = categories.map(cat => {
+                const count = menu.filter(p => p.category === cat).length;
+                const pct = Math.round((count / menu.length) * 100);
+                return `
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-white/70 font-medium">${cat}</span>
+                            <span class="text-[#c5a059] font-bold">${count} item</span>
+                        </div>
+                        <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-[#c5a059] to-[#a6843e] rounded-full" style="width:${pct}%; transition:width 1s ease;"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Price range
+            const sorted = [...menu].sort((a,b) => a.price - b.price);
+            const priceRange = document.getElementById('priceRange');
+            priceRange.innerHTML = sorted.map(p => `
+                <div class="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                    <div class="flex items-center gap-3">
+                        <img src="${p.image}" class="w-10 h-10 rounded-lg object-cover" onerror="this.src='https://placehold.co/40x40/1a1a1a/c5a059?text=P'">
+                        <span class="text-sm text-white/70 truncate max-w-[150px]">${p.name}</span>
+                    </div>
+                    <span class="text-[#c5a059] font-bold text-sm">${formatRupiah(p.price)}</span>
+                </div>
+            `).join('');
+        };
+
+        // === TABLE ===
+        const loadTable = () => {
+            const menu = getMenu();
+            const search = document.getElementById('searchMenu')?.value.toLowerCase() || '';
+            const stokFilter = document.getElementById('filterStok')?.value || 'all';
+
+            const filtered = menu.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(search) || p.category.toLowerCase().includes(search);
+                const matchStok = stokFilter === 'all' || p.stock === stokFilter;
+                return matchSearch && matchStok;
+            });
+
+            document.getElementById('tableCount').textContent = `${filtered.length} produk`;
+            const tbody = document.getElementById('menuTableBody');
+            tbody.innerHTML = filtered.length === 0 ? `
+                <tr><td colspan="5" class="text-center py-16 text-white/20 text-sm">
+                    <i class="fa-solid fa-bowl-food text-3xl block mb-3 text-white/10"></i>
+                    Tidak ada menu yang ditemukan.
+                </td></tr>
+            ` : filtered.map((p, i) => `
+                <tr class="table-row border-b border-white/5 hover:bg-white/2 transition-all" style="animation-delay:${i*0.04}s">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-4">
+                            <img src="${p.image}" class="w-14 h-14 rounded-xl object-cover flex-shrink-0 border border-white/10" onerror="this.src='https://placehold.co/56x56/1a1a1a/c5a059?text=P'">
+                            <div>
+                                <p class="font-bold text-sm">${p.name}</p>
+                                <p class="text-white/30 text-xs line-clamp-1 max-w-xs">${p.description}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[#c5a059] font-bold text-sm">${formatRupiah(p.price)}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="glass px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-[#c5a059]">${p.category}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <button onclick="toggleStock(${p.id})" class="toggle-stock px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${p.stock === 'Tersedia' ? 'badge-green' : 'badge-red'}">
+                            <i class="fa-solid fa-circle text-[6px] mr-1 align-middle"></i>
+                            ${p.stock}
+                        </button>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <button onclick="openEdit(${p.id})" class="glass px-3 py-2 rounded-xl text-xs text-white/50 hover:text-[#c5a059] hover:border-[#c5a059]/30 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            <button onclick="deleteProduct(${p.id})" class="glass px-3 py-2 rounded-xl text-xs text-white/50 hover:text-red-400 hover:border-red-500/30 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        const filterTable = () => loadTable();
+
+        // === TOGGLE STOCK ===
+        const toggleStock = (id) => {
+            let menu = getMenu();
+            const idx = menu.findIndex(p => p.id == id);
+            if (idx === -1) return;
+            menu[idx].stock = menu[idx].stock === 'Tersedia' ? 'Habis' : 'Tersedia';
+            saveMenu(menu);
+            Swal.fire({ icon:'success', title:`Stok diubah ke: ${menu[idx].stock}`, timer:1200, showConfirmButton:false, background:'#111', color:'#fff', toast:true, position:'top-end' });
+        };
+
+        // === DELETE ===
+        const deleteProduct = (id) => {
+            const menu = getMenu();
+            const product = menu.find(p => p.id == id);
+            Swal.fire({
+                title: `Hapus "${product?.name}"?`,
+                text: 'Data yang dihapus tidak bisa dikembalikan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#c5a059',
+                confirmButtonText: '<i class="fa-solid fa-trash mr-2"></i> Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                background: '#111', color: '#fff',
+                reverseButtons: true
+            }).then(r => {
+                if (r.isConfirmed) {
+                    saveMenu(menu.filter(p => p.id != id));
+                    Swal.fire({ icon:'success', title:'Dihapus!', text:`${product?.name} berhasil dihapus.`, background:'#111', color:'#fff', confirmButtonColor:'#c5a059' });
+                }
+            });
+        };
+
+        // === EDIT MODAL ===
+        const openEdit = (id) => {
+            const product = getMenu().find(p => p.id == id);
+            if (!product) return;
+            document.getElementById('editId').value = id;
+            document.getElementById('editName').value = product.name;
+            document.getElementById('editPrice').value = product.price;
+            document.getElementById('editCategory').value = product.category;
+            document.getElementById('editDesc').value = product.description;
+            document.getElementById('editStock').value = product.stock;
+            const modal = document.getElementById('editModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        const closeEdit = () => {
+            const modal = document.getElementById('editModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        document.getElementById('editForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editId').value);
+            let menu = getMenu();
+            const idx = menu.findIndex(p => p.id == id);
+            if (idx === -1) return;
+            menu[idx] = {
+                ...menu[idx],
+                name: document.getElementById('editName').value,
+                price: parseInt(document.getElementById('editPrice').value),
+                category: document.getElementById('editCategory').value,
+                description: document.getElementById('editDesc').value,
+                stock: document.getElementById('editStock').value,
+            };
+            saveMenu(menu);
+            closeEdit();
+            Swal.fire({ icon:'success', title:'Produk Diperbarui!', background:'#111', color:'#fff', confirmButtonColor:'#c5a059', timer:1500, showConfirmButton:false, toast:true, position:'top-end' });
+        });
+
+        // === ADD PRODUCT ===
+        const previewImage = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            document.getElementById('fileLabel').textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.getElementById('imgPreview');
+                img.src = e.target.result;
+                img.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        };
+
+        const previewUrl = () => {
+            const url = document.getElementById('pImageUrl').value;
+            const img = document.getElementById('imgPreview');
+            if (url) { img.src = url; img.classList.remove('hidden'); }
+            else img.classList.add('hidden');
+        };
+
+        const clearForm = () => {
+            document.getElementById('imgPreview').classList.add('hidden');
+            document.getElementById('imgPreview').src = '';
+            document.getElementById('fileLabel').textContent = 'Upload gambar...';
+        };
+
+        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let imageData = document.getElementById('pImageUrl').value;
+
+            // If file uploaded, use base64
+            const fileInput = document.getElementById('pImage');
+            if (fileInput.files[0]) {
+                imageData = await new Promise((res, rej) => {
+                    const reader = new FileReader();
+                    reader.onload = ev => res(ev.target.result);
+                    reader.onerror = rej;
+                    reader.readAsDataURL(fileInput.files[0]);
+                });
+            }
+
+            const newProduct = {
+                id: Date.now(),
+                name: document.getElementById('pName').value,
+                price: parseInt(document.getElementById('pPrice').value),
+                category: document.getElementById('pCategory').value,
+                description: document.getElementById('pDesc').value,
+                stock: document.getElementById('pStock').value,
+                image: imageData || 'https://placehold.co/400x300/1a1a1a/c5a059?text=Pempek+Najwa'
+            };
+
+            const menu = getMenu();
+            menu.push(newProduct);
+            saveMenu(menu);
+            e.target.reset();
+            clearForm();
+            Swal.fire({ icon:'success', title:'Produk Berhasil Ditambahkan!', text:`${newProduct.name} sudah masuk ke katalog menu.`, background:'#111', color:'#fff', confirmButtonColor:'#c5a059' })
+                .then(() => showTab('menu'));
+        });
+
+        // === PDF REPORT ===
+        const generatePDF = () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ unit:'mm', format:'a4' });
+            const menu = getMenu();
+
+            // Header Background
+            doc.setFillColor(10, 10, 10);
+            doc.rect(0, 0, 210, 50, 'F');
+
+            // Gold accent line
+            doc.setFillColor(197, 160, 89);
+            doc.rect(0, 48, 210, 2, 'F');
+
+            // Title
+            doc.setFontSize(28);
+            doc.setTextColor(197, 160, 89);
+            doc.setFont('helvetica', 'bold');
+            doc.text('PEMPEK NAJWA', 105, 22, { align:'center' });
+
+            doc.setFontSize(10);
+            doc.setTextColor(180, 180, 180);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Laporan Resmi Katalog Menu', 105, 32, { align:'center' });
+
+            doc.setFontSize(8);
+            doc.setTextColor(120, 120, 120);
+            doc.text(`Dicetak: ${new Date().toLocaleString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'})}`, 105, 42, { align:'center' });
+
+            // Summary Row
+            const avail = menu.filter(p => p.stock === 'Tersedia').length;
+            const out = menu.filter(p => p.stock === 'Habis').length;
+            doc.setFillColor(20, 20, 20);
+            doc.rect(10, 58, 58, 22, 'F');
+            doc.rect(76, 58, 58, 22, 'F');
+            doc.rect(142, 58, 58, 22, 'F');
+
+            doc.setFontSize(16); doc.setTextColor(197, 160, 89); doc.setFont('helvetica','bold');
+            doc.text(String(menu.length), 39, 68, {align:'center'});
+            doc.text(String(avail), 105, 68, {align:'center'});
+            doc.text(String(out), 171, 68, {align:'center'});
+            doc.setFontSize(7); doc.setTextColor(120,120,120); doc.setFont('helvetica','normal');
+            doc.text('TOTAL MENU', 39, 75, {align:'center'});
+            doc.text('TERSEDIA', 105, 75, {align:'center'});
+            doc.text('HABIS', 171, 75, {align:'center'});
+
+            // Table
+            doc.autoTable({
+                startY: 90,
+                head: [['No', 'Nama Menu', 'Kategori', 'Harga', 'Stok']],
+                body: menu.map((p, i) => [i+1, p.name, p.category, formatRupiah(p.price), p.stock]),
+                theme: 'grid',
+                headStyles: { fillColor:[197,160,89], textColor:[0,0,0], fontStyle:'bold', fontSize:9, halign:'center' },
+                bodyStyles: { fontSize:9, cellPadding:5 },
+                alternateRowStyles: { fillColor:[248,248,248] },
+                columnStyles: {
+                    0: { halign:'center', cellWidth:12 },
+                    2: { halign:'center', cellWidth:28 },
+                    3: { halign:'right', cellWidth:35 },
+                    4: { halign:'center', cellWidth:25 }
+                },
+                margin: { left:10, right:10 }
+            });
+
+            // Footer
+            const finalY = doc.lastAutoTable.finalY + 15;
+            doc.setDrawColor(197, 160, 89);
+            doc.line(10, finalY, 200, finalY);
+            doc.setFontSize(8); doc.setTextColor(120,120,120); doc.setFont('helvetica','italic');
+            doc.text('© 2024 Pempek Najwa Palembang · Dokumen ini merupakan laporan resmi sistem manajemen restoran.', 105, finalY + 8, {align:'center'});
+
+            doc.save(`Laporan_Menu_Pempek_Najwa_${new Date().toISOString().slice(0,10)}.pdf`);
+            Swal.fire({ icon:'success', title:'PDF Berhasil Dibuat!', text:'Laporan menu telah diunduh.', background:'#111', color:'#fff', confirmButtonColor:'#c5a059' });
+        };
+
+        // === LOGOUT ===
+        const logout = () => {
+            Swal.fire({
+                title: 'Konfirmasi Logout',
+                text: 'Anda akan keluar dari panel admin.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#c5a059',
+                confirmButtonText: 'Logout',
+                cancelButtonText: 'Batal',
+                background: '#111', color: '#fff',
+            }).then(r => {
+                if (r.isConfirmed) {
+                    sessionStorage.removeItem('isAdmin');
+                    localStorage.removeItem('najwa_session');
+                    window.location.href = 'login.html';
+                }
+            });
+        };
+
+        // === INIT ===
+        const init = async () => {
+            if (!localStorage.getItem('najwa_menu_v2')) {
+                try {
+                    const res = await fetch('/src/data/menu.json');
+                    const data = await res.json();
+                    localStorage.setItem('najwa_menu_v2', JSON.stringify(data));
+                } catch(e) {
+                    console.error('Failed to load menu.json:', e);
+                }
+            }
+            loadDashboard();
+            loadTable();
+        };
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

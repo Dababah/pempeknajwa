@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu | Pempek Najwa</title>
+    <meta name="description" content="Jelajahi lengkap menu Pempek Najwa - Pempek Kapal Selam, Lenjer, Adaan dan berbagai paket pilihan.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1,h2,h3,.serif { font-family: 'Playfair Display', serif; }
+        body { background: #0a0a0a; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #c5a059; border-radius:10px; }
+        .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+        .btn-gold { background: linear-gradient(135deg, #c5a059, #a6843e); color: #000; font-weight:700; transition:all .3s; }
+        .btn-gold:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(197,160,89,0.4); }
+        .card-hover { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+        .card-hover:hover { transform:translateY(-8px) scale(1.02); box-shadow:0 25px 50px rgba(197,160,89,0.15); border-color:rgba(197,160,89,0.3); }
+        .skeleton { background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: skeleton-wave 1.5s infinite; }
+        @keyframes skeleton-wave { 0%{background-position:200%0} 100%{background-position:-200%0} }
+        .filter-btn.active { background:linear-gradient(135deg,#c5a059,#a6843e); color:#000; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+        .menu-card { animation: fadeUp 0.5s ease forwards; opacity:0; }
+    </style>
+</head>
+<body class="text-white min-h-screen">
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#c5a059] to-[#a6843e] flex items-center justify-center">
+                    <i class="fa-solid fa-fire text-black text-xs"></i>
+                </div>
+                <span class="text-lg font-bold tracking-widest serif text-[#c5a059]">PEMPEK NAJWA</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-white/50 hover:text-white text-sm transition-colors">Home</a>
+                <a href="menu.html" class="text-[#c5a059] text-sm font-medium">Menu</a>
+                <a href="cart.html" class="text-white/50 hover:text-white text-sm transition-colors relative">
+                    Keranjang
+                    <span id="cartBadge" class="absolute -top-2 -right-5 bg-red-500 text-[10px] text-white rounded-full w-4 h-4 items-center justify-center hidden flex">0</span>
+                </a>
+                <a href="admin/login.html" class="btn-gold px-5 py-2 rounded-xl text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-xs"></i> Admin
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <div class="pt-28 pb-12 px-6 text-center relative">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-[#c5a059]/8 blur-[100px] rounded-full pointer-events-none"></div>
+        <p class="text-[#c5a059] tracking-[0.5em] text-xs uppercase font-bold mb-4">× Koleksi Menu ×</p>
+        <h1 class="serif text-5xl md:text-7xl font-bold mb-5">Menu <span class="italic text-[#c5a059]">Pilihan</span></h1>
+        <p class="text-white/40 max-w-lg mx-auto text-sm leading-relaxed">Semua menu segar dibuat harian dari ikan tenggiri pilihan. Tersedia dalam berbagai variasi untuk semua selera.</p>
+    </div>
+
+    <!-- SEARCH & FILTER BAR -->
+    <div class="max-w-7xl mx-auto px-6 mb-10">
+        <div class="glass rounded-2xl p-5 flex flex-col md:flex-row gap-5 items-center">
+            <!-- Search -->
+            <div class="relative flex-1 w-full">
+                <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-sm"></i>
+                <input id="searchInput" type="text" placeholder="Cari menu pempek..." class="w-full bg-white/5 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-[#c5a059]/50 transition-all">
+            </div>
+            <!-- Filter Categories -->
+            <div id="filterBtns" class="flex flex-wrap gap-2">
+                <button class="filter-btn active px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10" data-cat="all">Semua</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Favorite">Favorite</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Klasik">Klasik</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Camilan">Camilan</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Paket">Paket</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENU GRID -->
+    <main class="max-w-7xl mx-auto px-6 pb-28">
+        <p id="resultCount" class="text-white/30 text-xs mb-6 tracking-wide">Memuat menu...</p>
+        <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
+            <!-- Skeleton Loaders -->
+            ${[...Array(4)].join('<div class="skeleton rounded-3xl h-80"></div>')}
+        </div>
+        <p id="emptyMessage" class="text-center py-20 text-white/30 text-sm hidden">
+            <i class="fa-solid fa-bowl-food text-4xl text-white/10 block mb-4"></i>
+            Menu tidak ditemukan. Coba kata kunci yang berbeda.
+        </p>
+    </main>
+
+    <!-- BOTTOM NAV (MOBILE) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 glass border-t border-white/10 md:hidden">
+        <div class="flex justify-around py-3 px-4">
+            <a href="index.html" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors">
+                <i class="fa-solid fa-house text-lg"></i><span class="text-[10px]">Home</span>
+            </a>
+            <a href="menu.html" class="flex flex-col items-center gap-1 text-[#c5a059]">
+                <i class="fa-solid fa-utensils text-lg"></i><span class="text-[10px]">Menu</span>
+            </a>
+            <a href="cart.html" class="flex flex-col items-center gap-1 text-white/50 relative">
+                <i class="fa-solid fa-receipt text-lg"></i><span class="text-[10px]">Keranjang</span>
+                <span id="mobileBadge" class="absolute -top-1 right-2 bg-red-500 text-[9px] text-white rounded-full w-4 h-4 items-center justify-center hidden flex">0</span>
+            </a>
+            <a href="admin/login.html" class="flex flex-col items-center gap-1 text-white/50">
+                <i class="fa-solid fa-user-shield text-lg"></i><span class="text-[10px]">Admin</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        const formatRupiah = (n) => new Intl.NumberFormat('id-ID', {style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n);
+
+        const updateCartBadge = () => {
+            const items = JSON.parse(localStorage.getItem('najwa_cart')) || [];
+            const total = items.reduce((s,i) => s + i.qty, 0);
+            ['cartBadge','mobileBadge'].forEach(id => {
+                const el = document.getElementById(id);
+                if(!el) return;
+                if(total > 0) { el.textContent = total; el.classList.remove('hidden'); el.classList.add('flex'); }
+                else el.classList.add('hidden');
+            });
+        };
+
+        const addToCart = (id) => {
+            const menu = JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
+            const product = menu.find(p => p.id == id);
+            if (!product || product.stock !== 'Tersedia') {
+                Swal.fire({ icon:'warning', title:'Stok Habis', text:'Maaf, produk ini sedang tidak tersedia.', background:'#111', color:'#fff', confirmButtonColor:'#c5a059' });
+                return;
+            }
+            let cart = JSON.parse(localStorage.getItem('najwa_cart')) || [];
+            const idx = cart.findIndex(i => i.id == id);
+            if (idx > -1) cart[idx].qty += 1;
+            else cart.push({ ...product, qty: 1 });
+            localStorage.setItem('najwa_cart', JSON.stringify(cart));
+            updateCartBadge();
+            Swal.fire({ icon:'success', title:'Ditambahkan!', text:`${product.name} masuk keranjang.`, timer:1500, showConfirmButton:false, background:'#111', color:'#fff', toast:true, position:'top-end', timerProgressBar:true });
+        };
+
+        let allProducts = [];
+        let activeCategory = 'all';
+        let searchQuery = '';
+
+        const renderMenu = () => {
+            const grid = document.getElementById('menuGrid');
+            const empty = document.getElementById('emptyMessage');
+            const count = document.getElementById('resultCount');
+
+            let filtered = allProducts.filter(p => {
+                const matchCat = activeCategory === 'all' || p.category === activeCategory;
+                const matchSearch = p.name.toLowerCase().includes(searchQuery) || p.description.toLowerCase().includes(searchQuery);
+                return matchCat && matchSearch;
+            });
+
+            count.textContent = `Menampilkan ${filtered.length} menu`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            grid.innerHTML = filtered.map((p, i) => `
+                <div class="glass rounded-3xl overflow-hidden card-hover group menu-card" style="animation-delay:${i * 0.08}s">
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/400x300/1a1a1a/c5a059?text=Pempek+Najwa'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <div class="absolute top-3 left-3 right-3 flex justify-between items-start">
+                            <span class="glass px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-[#c5a059]">${p.category}</span>
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${p.stock === 'Tersedia' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+                                <i class="fa-solid fa-circle text-[6px] mr-1"></i>${p.stock}
+                            </span>
+                        </div>
+                        <div class="absolute bottom-4 left-4">
+                            <p class="text-white font-bold text-lg serif">${formatRupiah(p.price)}</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="serif font-bold text-base mb-2 group-hover:text-[#c5a059] transition-colors leading-snug">${p.name}</h3>
+                        <p class="text-white/35 text-xs leading-relaxed mb-5 line-clamp-3">${p.description}</p>
+                        <div class="flex gap-3">
+                            <button onclick="addToCart(${p.id})" class="flex-1 btn-gold py-3 rounded-xl text-xs flex items-center justify-center gap-2 ${p.stock !== 'Tersedia' ? 'opacity-40 cursor-not-allowed' : ''}" ${p.stock !== 'Tersedia' ? 'disabled' : ''}>
+                                <i class="fa-solid fa-cart-plus"></i> Tambah
+                            </button>
+                            <button onclick="quickView(${p.id})" class="w-12 glass rounded-xl flex items-center justify-center hover:bg-white/10 transition-all">
+                                <i class="fa-solid fa-eye text-sm text-white/50"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        const quickView = (id) => {
+            const product = allProducts.find(p => p.id == id);
+            if (!product) return;
+            Swal.fire({
+                html: `
+                    <div style="background:#111; color:#fff; font-family:'Plus Jakarta Sans', sans-serif;">
+                        <img src="${product.image}" style="width:100%; height:200px; object-fit:cover; border-radius:12px; margin-bottom:16px;" onerror="this.src='https://placehold.co/400x200/1a1a1a/c5a059?text=Pempek+Najwa'">
+                        <h3 style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:#fff; margin-bottom:8px;">${product.name}</h3>
+                        <p style="color:#999; font-size:0.85rem; line-height:1.7; margin-bottom:12px;">${product.description}</p>
+                        <p style="color:#c5a059; font-size:1.2rem; font-weight:700;">${formatRupiah(product.price)}</p>
+                    </div>
+                `,
+                background: '#111',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa-solid fa-cart-plus mr-2"></i> Tambah ke Keranjang',
+                cancelButtonText: 'Tutup',
+                confirmButtonColor: '#c5a059',
+                cancelButtonColor: '#333',
+                width: '420px',
+            }).then(r => { if(r.isConfirmed) addToCart(product.id); });
+        };
+
+        const initMenu = async () => {
+            if (!localStorage.getItem('najwa_menu_v2')) {
+                const res = await fetch('/src/data/menu.json');
+                const data = await res.json();
+                localStorage.setItem('najwa_menu_v2', JSON.stringify(data));
+            }
+            allProducts = JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
+            renderMenu();
+            updateCartBadge();
+        };
+
+        // Filter Events
+        document.getElementById('filterBtns').addEventListener('click', (e) => {
+            const btn = e.target.closest('.filter-btn');
+            if (!btn) return;
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-white/60');
+            });
+            btn.classList.add('active');
+            btn.classList.remove('text-white/60');
+            activeCategory = btn.dataset.cat;
+            renderMenu();
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase().trim();
+            renderMenu();
+        });
+
+        window.addEventListener('storage', () => {
+            allProducts = JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
+            renderMenu();
+            updateCartBadge();
+        });
+
+        document.addEventListener('DOMContentLoaded', initMenu);
+    </script>
+</body>
+</html>
