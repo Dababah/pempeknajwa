@@ -13,7 +13,7 @@ const Cart = {
 
   // Add item to cart
   add: (id) => {
-    const products = JSON.parse(localStorage.getItem('najwa_menu')) || [];
+    const products = JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
     const product = products.find(p => p.id == id);
     if (!product) return;
 

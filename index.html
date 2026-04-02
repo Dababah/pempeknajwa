@@ -198,17 +198,26 @@
             <a href="admin/login.html" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors">
                 <i class="fa-solid fa-user-shield text-lg"></i>
                 <span class="text-[10px] font-medium">Admin</span>
-            </a>
-        </div>
-    </nav>
-
     <script type="module">
+        const DEFAULT_MENU = [
+            { id: 1, name: "Pempek Kapal Selam Besar", description: "Pempek legendaris dengan isian satu telur ayam utuh.", price: 25000, stock: "Tersedia", category: "Favorite", image: "./src/img/pempek_kapal_selam.png" },
+            { id: 2, name: "Pempek Lenjer Panjang", description: "Pempek silinder panjang dengan tekstur kenyal premium.", price: 15000, stock: "Tersedia", category: "Klasik", image: "./src/img/pempek_lenjer.png" },
+            { id: 3, name: "Pempek Adaan (Bulat)", description: "Pempek berbentuk bulat dengan campuran santan dan daun bawang.", price: 5000, stock: "Tersedia", category: "Camilan", image: "./src/img/pempek_adaan.png" },
+            { id: 4, name: "Paket Hemat Najwa", description: "Kombinasi sempurna: 2 Adaan, 2 Telur Kecil, dan 1 Lenjer Kecil.", price: 35000, stock: "Tersedia", category: "Paket", image: "./src/img/pempek_paket.png" }
+        ];
+
         // Initialize menu DB from JSON
         const initDB = async () => {
             if (!localStorage.getItem('najwa_menu_v2')) {
-                const res = await fetch('/src/data/menu.json');
-                const data = await res.json();
-                localStorage.setItem('najwa_menu_v2', JSON.stringify(data));
+                try {
+                    const res = await fetch('./src/data/menu.json');
+                    if (!res.ok) throw new Error('Fetch failed');
+                    const data = await res.json();
+                    localStorage.setItem('najwa_menu_v2', JSON.stringify(data));
+                } catch(e) {
+                    console.warn('Using default menu fallback:', e);
+                    localStorage.setItem('najwa_menu_v2', JSON.stringify(DEFAULT_MENU));
+                }
             }
         };
 
@@ -226,8 +235,10 @@
 
         const renderFeatured = () => {
             const menu = JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
-            const featured = menu.slice(0, 4);
+            // Show latest 4 products or any products if less than 4
+            const featured = [...menu].reverse().slice(0, 4);
             const grid = document.getElementById('featuredGrid');
+            if (!grid) return;
             grid.innerHTML = featured.map(p => `
                 <div class="glass rounded-3xl overflow-hidden card-hover group cursor-pointer" onclick="window.location='menu.html'">
                     <div class="relative h-52 overflow-hidden">
@@ -268,7 +279,10 @@
             renderFeatured();
             updateCartBadge();
         });
-        window.addEventListener('storage', updateCartBadge);
+        window.addEventListener('storage', () => {
+            renderFeatured();
+            updateCartBadge();
+        });
     </script>
 </body>
 </html>

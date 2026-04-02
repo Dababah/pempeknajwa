@@ -74,8 +74,10 @@
                 <button class="filter-btn active px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10" data-cat="all">Semua</button>
                 <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Favorite">Favorite</button>
                 <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Klasik">Klasik</button>
-                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Camilan">Camilan</button>
                 <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Paket">Paket</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Camilan">Camilan</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Frozen Food">Frozen Food</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Kerupuk & Kemplang">Kerupuk</button>
                 <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold tracking-wide glass hover:bg-white/5 transition-all border border-white/10 text-white/60" data-cat="Minuman">Minuman</button>
             </div>
         </div>
@@ -221,11 +223,26 @@
             }).then(r => { if(r.isConfirmed) addToCart(product.id); });
         };
 
+        const DEFAULT_MENU = [
+            { id: 1, name: "Pempek Kapal Selam Besar", description: "Pempek legendaris dengan isian satu telur ayam utuh.", price: 25000, stock: "Tersedia", category: "Favorite", image: "./src/img/pempek_kapal_selam.png" },
+            { id: 2, name: "Pempek Lenjer Panjang", description: "Pempek silinder panjang dengan tekstur kenyal premium.", price: 15000, stock: "Tersedia", category: "Klasik", image: "./src/img/pempek_lenjer.png" },
+            { id: 3, name: "Pempek Adaan (Bulat)", description: "Pempek berbentuk bulat dengan campuran santan dan daun bawang.", price: 5000, stock: "Tersedia", category: "Camilan", image: "./src/img/pempek_adaan.png" },
+            { id: 4, name: "Paket Hemat Najwa", description: "Kombinasi sempurna: 2 Adaan, 2 Telur Kecil, dan 1 Lenjer Kecil.", price: 35000, stock: "Tersedia", category: "Paket", image: "./src/img/pempek_paket.png" },
+            { id: 5, name: "Es Teh Manis", description: "Teh seduh tradisional dengan gula asli dan es batu kristal.", price: 5000, stock: "Tersedia", category: "Minuman", image: "./src/img/es_teh.png" },
+            { id: 6, name: "Es Jeruk Peras", description: "Jeruk peras murni dengan sedikit gula dan es.", price: 10000, stock: "Tersedia", category: "Minuman", image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?q=80&w=400&h=300&auto=format&fit=crop" }
+        ];
+
         const initMenu = async () => {
             if (!localStorage.getItem('najwa_menu_v2')) {
-                const res = await fetch('/src/data/menu.json');
-                const data = await res.json();
-                localStorage.setItem('najwa_menu_v2', JSON.stringify(data));
+                try {
+                    const res = await fetch('./src/data/menu.json');
+                    if (!res.ok) throw new Error('Fetch failed');
+                    const data = await res.json();
+                    localStorage.setItem('najwa_menu_v2', JSON.stringify(data));
+                } catch(e) { 
+                    console.warn('Fallback applied:', e); 
+                    localStorage.setItem('najwa_menu_v2', JSON.stringify(DEFAULT_MENU));
+                }
             }
             allProducts = JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
             renderMenu();

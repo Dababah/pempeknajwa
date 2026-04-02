@@ -86,6 +86,9 @@
             <button onclick="logout()" class="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all text-sm">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
             </button>
+            <button onclick="resetStorage()" class="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-white/20 hover:text-orange-400 transition-all text-[10px] mt-1 uppercase tracking-widest font-bold">
+                <i class="fa-solid fa-broom"></i> Bersihkan Cache Data
+            </button>
             <a href="../index.html" class="flex items-center gap-2 px-4 py-3 rounded-xl text-white/30 hover:text-white/60 transition-all text-sm mt-1">
                 <i class="fa-solid fa-store"></i> Lihat Toko
             </a>
@@ -238,7 +241,15 @@
                                     <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Kategori *</label>
                                     <input type="text" id="pCategory" required placeholder="cth: Favorite, Paket, Klasik" class="input-field w-full rounded-xl py-3 px-4 text-sm" list="categoryList">
                                     <datalist id="categoryList">
-                                        <option value="Favorite"><option value="Klasik"><option value="Camilan"><option value="Paket"><option value="Minuman">
+                                        <option value="Favorite">
+                                        <option value="Klasik">
+                                        <option value="Camilan">
+                                        <option value="Paket Hemat">
+                                        <option value="Paket Keluarga">
+                                        <option value="Frozen Food">
+                                        <option value="Kerupuk & Kemplang">
+                                        <option value="Minuman">
+                                        <option value="Cuko Extra">
                                     </datalist>
                                 </div>
                                 <div>
@@ -303,7 +314,7 @@
                 </div>
                 <div>
                     <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Kategori</label>
-                    <input type="text" id="editCategory" class="input-field w-full rounded-xl py-3 px-4 text-sm">
+                    <input type="text" id="editCategory" class="input-field w-full rounded-xl py-3 px-4 text-sm" list="categoryList">
                 </div>
                 <div>
                     <label class="text-[10px] uppercase tracking-widest text-white/30 font-bold block mb-2">Deskripsi</label>
@@ -330,9 +341,22 @@
             window.location.href = 'login.html';
         }
 
+        const DEFAULT_MENU = [
+            { id: 1, name: "Pempek Kapal Selam Besar", description: "Pempek legendaris dengan isian satu telur ayam utuh.", price: 25000, stock: "Tersedia", category: "Favorite", image: "../src/img/pempek_kapal_selam.png" },
+            { id: 2, name: "Pempek Lenjer Panjang", description: "Pempek silinder panjang dengan tekstur kenyal premium.", price: 15000, stock: "Tersedia", category: "Klasik", image: "../src/img/pempek_lenjer.png" },
+            { id: 3, name: "Pempek Adaan (Bulat)", description: "Pempek berbentuk bulat dengan campuran santan dan daun bawang.", price: 5000, stock: "Tersedia", category: "Camilan", image: "../src/img/pempek_adaan.png" },
+            { id: 4, name: "Paket Hemat Najwa", description: "Kombinasi sempurna: 2 Adaan, 2 Telur Kecil, dan 1 Lenjer Kecil.", price: 35000, stock: "Tersedia", category: "Paket", image: "../src/img/pempek_paket.png" },
+            { id: 5, name: "Es Teh Manis", description: "Teh seduh tradisional dengan gula asli dan es batu kristal.", price: 5000, stock: "Tersedia", category: "Minuman", image: "../src/img/es_teh.png" },
+            { id: 6, name: "Es Jeruk Peras", description: "Jeruk peras murni dengan sedikit gula dan es.", price: 10000, stock: "Tersedia", category: "Minuman", image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?q=80&w=400&h=300&auto=format&fit=crop" }
+        ];
+
         const formatRupiah = (n) => new Intl.NumberFormat('id-ID', {style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n);
 
-        const getMenu = () => JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
+        const getMenu = () => {
+            const stored = localStorage.getItem('najwa_menu_v2');
+            if (!stored) return DEFAULT_MENU;
+            try { return JSON.parse(stored); } catch(e) { return DEFAULT_MENU; }
+        };
         const saveMenu = (menu) => {
             localStorage.setItem('najwa_menu_v2', JSON.stringify(menu));
             loadDashboard();
@@ -527,14 +551,40 @@
         });
 
         // === ADD PRODUCT ===
+        // === IMAGE COMPRESSION HELPER ===
+        const compressImage = (base64Str) => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = base64Str;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600; // Optimal for small product cards
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6)); // Compress to JPEG with 60% quality
+                };
+            });
+        };
+
         const previewImage = (event) => {
             const file = event.target.files[0];
             if (!file) return;
             document.getElementById('fileLabel').textContent = file.name;
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 const img = document.getElementById('imgPreview');
-                img.src = e.target.result;
+                const compressed = await compressImage(e.target.result);
+                img.src = compressed;
                 img.classList.remove('hidden');
             };
             reader.readAsDataURL(file);
@@ -555,36 +605,80 @@
 
         document.getElementById('addProductForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            let imageData = document.getElementById('pImageUrl').value;
+            
+            try {
+                let imageData = document.getElementById('pImageUrl').value;
+                const fileInput = document.getElementById('pImage');
+                
+                // Show loading state
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
 
-            // If file uploaded, use base64
-            const fileInput = document.getElementById('pImage');
-            if (fileInput.files[0]) {
-                imageData = await new Promise((res, rej) => {
-                    const reader = new FileReader();
-                    reader.onload = ev => res(ev.target.result);
-                    reader.onerror = rej;
-                    reader.readAsDataURL(fileInput.files[0]);
+                // If file uploaded, compress it
+                if (fileInput.files[0]) {
+                    const base64 = await new Promise((res, rej) => {
+                        const reader = new FileReader();
+                        reader.onload = ev => res(ev.target.result);
+                        reader.onerror = rej;
+                        reader.readAsDataURL(fileInput.files[0]);
+                    });
+                    imageData = await compressImage(base64);
+                }
+
+                const newProduct = {
+                    id: Date.now(),
+                    name: document.getElementById('pName').value.trim(),
+                    price: parseInt(document.getElementById('pPrice').value) || 0,
+                    category: document.getElementById('pCategory').value.trim(),
+                    description: document.getElementById('pDesc').value.trim(),
+                    stock: document.getElementById('pStock').value,
+                    image: imageData || 'https://placehold.co/400x300/1a1a1a/c5a059?text=Pempek+Najwa'
+                };
+
+                if (!newProduct.name || !newProduct.price) {
+                    throw new Error('Nama dan harga harus diisi.');
+                }
+
+                const menu = getMenu();
+                menu.push(newProduct);
+                
+                // Save and catch quota errors
+                try {
+                    saveMenu(menu);
+                } catch (storageErr) {
+                    if (storageErr.name === 'QuotaExceededError') {
+                        throw new Error('Penyimpanan penuh! Coba kurangi ukuran gambar atau hapus beberapa menu lama.');
+                    }
+                    throw storageErr;
+                }
+
+                // Reset and notify
+                e.target.reset();
+                clearForm();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+
+                Swal.fire({ 
+                    icon:'success', 
+                    title:'Berhasil!', 
+                    text:`${newProduct.name} telah disimpan.`, 
+                    background:'#111', color:'#fff', confirmButtonColor:'#c5a059' 
+                }).then(() => showTab('menu'));
+
+            } catch (err) {
+                console.error('Error:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Menyimpan',
+                    text: err.message || 'Terjadi kesalahan sistem.',
+                    background: '#111', color: '#fff'
                 });
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> Simpan Produk';
             }
-
-            const newProduct = {
-                id: Date.now(),
-                name: document.getElementById('pName').value,
-                price: parseInt(document.getElementById('pPrice').value),
-                category: document.getElementById('pCategory').value,
-                description: document.getElementById('pDesc').value,
-                stock: document.getElementById('pStock').value,
-                image: imageData || 'https://placehold.co/400x300/1a1a1a/c5a059?text=Pempek+Najwa'
-            };
-
-            const menu = getMenu();
-            menu.push(newProduct);
-            saveMenu(menu);
-            e.target.reset();
-            clearForm();
-            Swal.fire({ icon:'success', title:'Produk Berhasil Ditambahkan!', text:`${newProduct.name} sudah masuk ke katalog menu.`, background:'#111', color:'#fff', confirmButtonColor:'#c5a059' })
-                .then(() => showTab('menu'));
         });
 
         // === PDF REPORT ===
@@ -662,6 +756,25 @@
             Swal.fire({ icon:'success', title:'PDF Berhasil Dibuat!', text:'Laporan menu telah diunduh.', background:'#111', color:'#fff', confirmButtonColor:'#c5a059' });
         };
 
+        // === RESET STORAGE ===
+        const resetStorage = () => {
+            Swal.fire({
+                title: 'Bersihkan Cache?',
+                text: 'Ini akan menghapus semua menu yang belum di-publish dan mengembalikannya ke awal.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff9800',
+                confirmButtonText: 'Ya, Bersihkan',
+                cancelButtonText: 'Batal',
+                background: '#111', color: '#fff'
+            }).then(r => {
+                if (r.isConfirmed) {
+                    localStorage.removeItem('najwa_menu_v2');
+                    window.location.reload();
+                }
+            });
+        };
+
         // === LOGOUT ===
         const logout = () => {
             Swal.fire({
@@ -687,7 +800,9 @@
         const init = async () => {
             if (!localStorage.getItem('najwa_menu_v2')) {
                 try {
-                    const res = await fetch('/src/data/menu.json');
+                    // Fix path to be relative to the admin folder
+                    const res = await fetch('../src/data/menu.json');
+                    if (!res.ok) throw new Error('Failed to fetch menu data');
                     const data = await res.json();
                     localStorage.setItem('najwa_menu_v2', JSON.stringify(data));
                 } catch(e) {

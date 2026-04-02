@@ -2,12 +2,12 @@
 const CRUD = {
   // Get all menu items
   getMenu: () => {
-    return JSON.parse(localStorage.getItem('najwa_menu')) || [];
+    return JSON.parse(localStorage.getItem('najwa_menu_v2')) || [];
   },
 
   // Save all menu items
   saveMenu: (menu) => {
-    localStorage.setItem('najwa_menu', JSON.stringify(menu));
+    localStorage.setItem('najwa_menu_v2', JSON.stringify(menu));
     window.location.reload(); // Refresh to reflect changes
   },
 
